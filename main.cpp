@@ -6,10 +6,43 @@ const int WINDOW_HEIGHT = 800; //Lös detta på ett bättre sätt sen
 const int WINDOW_WIDTH = 1200; //Lös detta på ett bättre sätt sen
 const int DISTANCE_TO_BORDER = 30;
 const int INITIAL_PLAYER_SPEED = 8;
+const int ballSide = 15;
 sf::Vector2f PLAYER_DIMENSIONS(25, 200);
 
-enum Keys {
+enum Keys 
+{
     UP, DOWN
+};
+
+class Ball 
+{
+public:
+    sf::RectangleShape body;
+    sf::Vector2f speed;
+
+    void handleMovement() 
+    {
+        auto currentPos = body.getPosition();
+        if (currentPos.y <= 0 || currentPos.y >= WINDOW_HEIGHT - ballSide) {
+            speed.y = -speed.y;
+        }         
+
+
+        auto nextPos = currentPos + speed;
+        nextPos.y = std::min(WINDOW_HEIGHT - ballSide, std::max(0, (int) nextPos.y));
+
+        body.setPosition(nextPos);
+    }
+
+    Ball() :
+    speed(sf::Vector2f(2, 10)),
+    body(sf::RectangleShape(sf::Vector2f(ballSide, ballSide)))
+    {
+        body.setPosition(WINDOW_WIDTH / 2 - ballSide / 2, WINDOW_HEIGHT / 2 - ballSide / 2);
+    }
+
+
+
 };
 
 class Player 
@@ -62,6 +95,8 @@ int main()
     players.push_back(&pLeft);
     players.push_back(&pRight);
 
+    Ball ball;
+
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "SFML works!");
     window.setFramerateLimit(60);
 
@@ -80,6 +115,9 @@ int main()
             player->handleMovement();
             window.draw(player->body);
         }
+
+        ball.handleMovement(); window.draw(ball.body);
+
         window.display();
     }
 
