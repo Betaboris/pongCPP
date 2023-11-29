@@ -1,3 +1,0 @@
-/home/erik/cppPro/test/build/CMakeFiles/rebuild_cache.dir
-/home/erik/cppPro/test/build/CMakeFiles/edit_cache.dir
-/home/erik/cppPro/test/build/CMakeFiles/sfml-app.dir
