@@ -35,7 +35,7 @@ public:
     }
 
     Ball() :
-    speed(sf::Vector2f(2, 10)),
+    speed(sf::Vector2f(5, 8)),
     body(sf::RectangleShape(sf::Vector2f(ballSide, ballSide)))
     {
         body.setPosition(WINDOW_WIDTH / 2 - ballSide / 2, WINDOW_HEIGHT / 2 - ballSide / 2);
@@ -63,7 +63,8 @@ public:
         body.setPosition(pos);
     }
 
-    void handleMovement() {
+    void handleMovement() 
+    {
         if (sf::Keyboard::isKeyPressed(keyBindings[UP])) {
             int newPos = body.getPosition().y - playerSpeed;
             body.setPosition(pos.x, std::max(0, newPos));
@@ -74,7 +75,29 @@ public:
         }   
     }
 
+    void handleBallCollision(Ball& ball) 
+    {
+        auto ballPos = ball.body.getPosition();
+        auto playerPos = body.getPosition();
+        int leftSide = playerPos.x;
+        int rightSide = leftSide + PLAYER_DIMENSIONS.x;
 
+        if (ball.speed.x < 0) 
+        {
+            if (ballPos.x >= leftSide && ballPos.x <= rightSide) 
+            {
+                ball.speed.x = -ball.speed.x;
+            }
+        } 
+
+        else  
+        {
+            if (ballPos.x + ballSide >= leftSide && ballPos.x + ballSide <= rightSide) 
+            {
+                ball.speed.x = -ball.speed.x;
+            }
+        }
+    }
 };
 
 
@@ -113,6 +136,7 @@ int main()
         window.clear();
         for (Player* player : players) {
             player->handleMovement();
+            player->handleBallCollision(ball);
             window.draw(player->body);
         }
 
