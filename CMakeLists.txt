@@ -7,6 +7,9 @@ find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
 # Set the source files
 set(SOURCES main.cpp)
 
+set (CMAKE_CXX_STANDARD 11)
+
+
 # Add an executable target
 add_executable(sfml-app ${SOURCES})
 
