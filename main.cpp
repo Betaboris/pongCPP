@@ -40,9 +40,6 @@ public:
     {
         body.setPosition(WINDOW_WIDTH / 2 - ballSide / 2, WINDOW_HEIGHT / 2 - ballSide / 2);
     }
-
-
-
 };
 
 class Player 
