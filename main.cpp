@@ -1,6 +1,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include <unordered_map>
 
 const int WINDOW_HEIGHT = 800; //Lös detta på ett bättre sätt sen
 const int WINDOW_WIDTH = 1200; //Lös detta på ett bättre sätt sen
