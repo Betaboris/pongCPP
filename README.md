@@ -1,7 +1,9 @@
-# pongCPP
-Pong game in cpp
+# PongCPP: A C++ Pong Game
 
-Requirements: 
-SFML - #sudo apt-get install libsfml-dev
+This project is a simple implementation of the classic Pong game in C++.
 
-Run with: #make run
+### Getting Started
+1. Run `configure.sh` to initialize the project.
+2. To start the game, use `"make run"` from the build folder.
+
+Enjoy playing Pong!
