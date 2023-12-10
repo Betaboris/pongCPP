@@ -15,7 +15,7 @@ void Player::handleMovement()
 {
     if (sf::Keyboard::isKeyPressed(keyBindings[UP])) {
         int newPos = body.getPosition().y - playerSpeed;
-        body.setPosition(this->defaultX, std::max(0, newPos));
+        body.setPosition(defaultX, std::max(0, newPos));
     }
 
     if (sf::Keyboard::isKeyPressed(keyBindings[DOWN])) {
