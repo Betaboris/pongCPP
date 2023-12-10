@@ -16,3 +16,8 @@ void Ball::handleMovement()
 
     body.setPosition(nextPos);
 }
+
+void Ball::update()
+{
+    handleMovement();
+}

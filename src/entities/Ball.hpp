@@ -12,6 +12,8 @@ public:
     Ball();
 
     void handleMovement() override;
+
+    void update() override;
 };
 
 #endif
