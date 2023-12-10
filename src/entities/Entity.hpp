@@ -9,7 +9,6 @@ class Entity
 
 public:
     sf::RectangleShape body;
-    sf::Vector2f pos;
 
     Entity(const sf::Vector2f& position, const sf::Vector2f& size);
 

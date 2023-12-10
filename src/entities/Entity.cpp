@@ -1,9 +1,9 @@
 #include "Entity.hpp"
 #include <SFML/Graphics.hpp>
 
-Entity::Entity(const sf::Vector2f& position, const sf::Vector2f& size) : pos(position) {
+Entity::Entity(const sf::Vector2f& position, const sf::Vector2f& size) {
     body.setSize(size);
-    body.setPosition(pos);
+    body.setPosition(position);
 }
 
 void Entity::updateAll(sf::RenderWindow &window, std::vector<Entity*> entities)
