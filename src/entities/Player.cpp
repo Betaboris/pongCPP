@@ -1,5 +1,7 @@
 #include "Player.hpp"
 #include <unordered_map>
+#include "../utils/utils.hpp"
+#include <iostream>
 
 std::vector<Ball*> Player::balls;
 
@@ -22,20 +24,16 @@ void Player::handleMovement()
     }   
 }
 
-void Player::handleBallCollisions() 
-{
-    for (auto ball : balls) {
-        auto ballPos = ball->body.getPosition();
-        auto playerPos = body.getPosition();
-        int leftSide = playerPos.x;
-        int rightSide = leftSide + PLAYER_DIMENSIONS.x;
+void Player::handleBallCollisions() {
+    sf::Vector2f ptopLeft = body.getPosition();
+    sf::Vector2f pbottomRight = body.getPosition() + body.getSize();
 
-        if (ball->speed.x < 0) {
-            if (ballPos.x >= leftSide && ballPos.x <= rightSide) 
-                ball->speed.x = -ball->speed.x;
-        } else {
-            if (ballPos.x + ballSide >= leftSide && ballPos.x + ballSide <= rightSide) 
-                ball->speed.x = -ball->speed.x;
+    for (auto ball : balls) {
+        sf::Vector2f btopLeft = ball->body.getPosition();
+        sf::Vector2f bbottomRight = ball->body.getPosition() + ball->body.getSize();
+
+        if (areRectanglesOverlapping(ptopLeft, pbottomRight, btopLeft, bbottomRight)) {
+            ball->speed.x = -ball->speed.x;
         }
     }
 }

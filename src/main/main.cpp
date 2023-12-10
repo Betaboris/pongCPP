@@ -2,17 +2,17 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include "../constants/constants.hpp"
-#include "../entities/Entity.hpp"
-#include "../entities/Player.hpp"
-#include "../entities/Ball.hpp"
+#include "../entities/all_entities.hpp"
 #include "../utils/utils.hpp"
 
 
 int main()
 {
     std::vector<Entity*> enteties;
+
     Ball ball;
     Player::balls.push_back(&ball);
+
     Player pLeft(DISTANCE_TO_BORDER, playerKeyBindings(sf::Keyboard::Key::W, sf::Keyboard::Key::S));
     Player pRight(WINDOW_WIDTH - (DISTANCE_TO_BORDER + PLAYER_DIMENSIONS.x), playerKeyBindings(sf::Keyboard::Key::Up, sf::Keyboard::Key::Down));
 
