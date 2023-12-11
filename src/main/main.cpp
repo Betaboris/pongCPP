@@ -5,10 +5,6 @@
 #include "../entities/all_entities.hpp"
 #include "../utils/utils.hpp"
 
-void nothing() {
-    std::cout << "Calling function" << std::endl;
-}
-
 int main() {
     std::vector<Entity*> entities;
 
