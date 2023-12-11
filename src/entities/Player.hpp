@@ -6,8 +6,7 @@
 #include "../constants/constants.hpp"
 #include <vector>
 
-class Player : public Entity
-{
+class Player : public Entity {
 public:
     int playerSpeed;
     int defaultX;
