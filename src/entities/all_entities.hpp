@@ -4,5 +4,6 @@
 #include "Entity.hpp"
 #include "Player.hpp"
 #include "Ball.hpp"
+#include "Boundary.hpp"
 
 #endif

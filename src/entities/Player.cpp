@@ -25,14 +25,10 @@ void Player::handleMovement()
 }
 
 void Player::handleBallCollisions() {
-    sf::Vector2f ptopLeft = body.getPosition();
-    sf::Vector2f pbottomRight = body.getPosition() + body.getSize();
+    auto pBounding = getBoundingBox();
 
     for (auto ball : balls) {
-        sf::Vector2f btopLeft = ball->body.getPosition();
-        sf::Vector2f bbottomRight = ball->body.getPosition() + ball->body.getSize();
-
-        if (areRectanglesOverlapping(ptopLeft, pbottomRight, btopLeft, bbottomRight)) {
+        if (isCollision(*ball)) {
             ball->speed.x = -ball->speed.x;
         }
     }

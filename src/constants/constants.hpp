@@ -14,4 +14,8 @@ enum Keys {
     UP, DOWN
 };
 
+enum BoundaryType {
+    Bouncy, Functional
+};
+
 #endif
