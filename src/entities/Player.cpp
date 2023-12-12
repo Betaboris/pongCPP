@@ -9,27 +9,40 @@ std::vector<Boundary*> Player::boundaries;
 Player::Player(int defaultX, std::unordered_map<Keys, sf::Keyboard::Key> keyBindings) : 
         Entity(sf::Vector2f(defaultX, (WINDOW_HEIGHT / 2) - (PLAYER_DIMENSIONS.y / 2)), PLAYER_DIMENSIONS),
         keyBindings(keyBindings),
-        playerSpeed(INITIAL_PLAYER_SPEED),
-        acceleration(1),
+        velocity(0),
+        acceleration(0.4f),
+        deceleration(0.1f),
         defaultX(defaultX) {}
 
 void Player::handleMovement() {
+
+    bool bounced = false;
+
     for (auto b : boundaries) {
         if (isCollision(*b)) {
-            playerSpeed *= -BOUNCE_FACTOR;
+            velocity *= -BOUNCE_FACTOR;
+            bounced = true;
         }
     }
+
     if (sf::Keyboard::isKeyPressed(keyBindings[UP])) {
-        playerSpeed += acceleration;
-        int newPos = body.getPosition().y - playerSpeed;
-        body.setPosition(defaultX, std::max(0, newPos));
+        velocity -= acceleration;
     }
 
     if (sf::Keyboard::isKeyPressed(keyBindings[DOWN])) {
-        playerSpeed += acceleration;
-        int newPos = body.getPosition().y + playerSpeed;
-        body.setPosition(defaultX, std::min(WINDOW_HEIGHT - (int) PLAYER_DIMENSIONS.y, newPos));
+        velocity += acceleration;
     }   
+
+    if (velocity > 0) {
+        velocity = std::max(0.0f, velocity - deceleration);
+    } else if (velocity < 0) {
+        velocity = std::min(0.0f, velocity + deceleration);
+    }
+
+    float yAxis = body.getPosition().y + velocity;
+    float maxYPos = WINDOW_HEIGHT - (int) PLAYER_DIMENSIONS.y;
+    yAxis = std::min(maxYPos, std::max(yAxis, 0.0f));
+    body.setPosition(defaultX, yAxis);
 }
 
 void Player::handleBallCollisions() {
@@ -38,9 +51,9 @@ void Player::handleBallCollisions() {
             ball->speed.x = -ball->speed.x;
             int dy;
             if (sf::Keyboard::isKeyPressed(keyBindings[UP])) {
-                dy = -playerSpeed;
+                dy = -velocity;
             } else if (sf::Keyboard::isKeyPressed(keyBindings[DOWN])) {
-                dy = playerSpeed;
+                dy = velocity;
             } else dy = 0;
             ball->speed.y = ball->speed.y + dy;
         }
