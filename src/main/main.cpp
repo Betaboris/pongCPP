@@ -31,6 +31,9 @@ int main() {
     Ball::boundaries.insert(&topWall);
     Ball::boundaries.insert(&bottomWall);
 
+    Player::boundaries.push_back(&topWall);
+    Player::boundaries.push_back(&bottomWall);
+
     Player pLeft(DISTANCE_TO_BORDER, playerKeyBindings(sf::Keyboard::Key::W, sf::Keyboard::Key::S));
     Player pRight(WINDOW_WIDTH - (DISTANCE_TO_BORDER + PLAYER_DIMENSIONS.x), playerKeyBindings(sf::Keyboard::Key::Up, sf::Keyboard::Key::Down));
 
