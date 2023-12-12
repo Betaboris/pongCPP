@@ -8,8 +8,9 @@
 
 class Player : public Entity {
 public:
-    int playerSpeed;
-    int acceleration;
+    float velocity;
+    float acceleration;
+    float deceleration;
     int defaultX;
     std::unordered_map<Keys, sf::Keyboard::Key> keyBindings;
     static std::vector<Ball*> balls;
