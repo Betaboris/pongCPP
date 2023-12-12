@@ -48,13 +48,7 @@ void Player::handleBallCollisions() {
     for (auto ball : balls) {
         if (isCollision(*ball))  {
             ball->speed.x = -ball->speed.x;
-            int dy;
-            if (sf::Keyboard::isKeyPressed(keyBindings[UP])) {
-                dy = -velocity;
-            } else if (sf::Keyboard::isKeyPressed(keyBindings[DOWN])) {
-                dy = velocity;
-            } else dy = 0;
-            ball->speed.y = ball->speed.y + dy;
+            ball->speed.y = ball->speed.y + velocity;
         }
     }
 }
