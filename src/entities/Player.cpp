@@ -15,13 +15,9 @@ Player::Player(int defaultX, std::unordered_map<Keys, sf::Keyboard::Key> keyBind
         defaultX(defaultX) {}
 
 void Player::handleMovement() {
-
-    bool bounced = false;
-
     for (auto b : boundaries) {
         if (isCollision(*b)) {
             velocity *= -BOUNCE_FACTOR;
-            bounced = true;
         }
     }
 
