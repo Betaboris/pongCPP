@@ -15,8 +15,8 @@ bool Entity::isCollision(Entity& other) {
     auto ourBoundingBox = getBoundingBox();
     auto theirBoundingBox = other.getBoundingBox();
     
-    bool overlapOnX = !(ourBoundingBox.second.x < theirBoundingBox.first.x || ourBoundingBox.first.x > theirBoundingBox.second.x);
-    bool overlapOnY = !(ourBoundingBox.second.y < theirBoundingBox.first.y || ourBoundingBox.first.y > theirBoundingBox.second.y);
+    bool overlapOnX = (ourBoundingBox.second.x >= theirBoundingBox.first.x && ourBoundingBox.first.x <= theirBoundingBox.second.x);
+    bool overlapOnY = (ourBoundingBox.second.y >= theirBoundingBox.first.y && ourBoundingBox.first.y <= theirBoundingBox.second.y);
 
     return overlapOnX && overlapOnY;
 }
