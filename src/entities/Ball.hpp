@@ -4,15 +4,15 @@
 #include <unordered_set>
 #include "Entity.hpp"
 #include "Boundary.hpp"
+#include "Player.hpp"
 
 class Ball : public Entity {
 public:
     sf::Vector2f speed;
-    static std::unordered_set<Boundary*> boundaries;
 
     Ball();
 
-    void checkBoundaryCollision();
+    void handleCollisions();
     void handleMovement() override;
     void update() override;
 };

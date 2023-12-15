@@ -9,7 +9,6 @@ int main() {
     std::vector<Entity*> entities;
 
     Ball ball;
-    Player::balls.push_back(&ball);
 
     sf::Vector2f topSize(WINDOW_WIDTH, 50);
     sf::Vector2f sideSize(50, WINDOW_HEIGHT);
@@ -25,14 +24,6 @@ int main() {
     Boundary topWall(sf::Vector2f(0, -50), topSize, Bouncy);
 
     Boundary bottomWall(sf::Vector2f(0, WINDOW_HEIGHT), topSize, Bouncy);
-
-    Ball::boundaries.insert(&leftWall);
-    Ball::boundaries.insert(&rightWall);
-    Ball::boundaries.insert(&topWall);
-    Ball::boundaries.insert(&bottomWall);
-
-    Player::boundaries.push_back(&topWall);
-    Player::boundaries.push_back(&bottomWall);
 
     Player pLeft(DISTANCE_TO_BORDER, playerKeyBindings(sf::Keyboard::Key::W, sf::Keyboard::Key::S));
     Player pRight(WINDOW_WIDTH - (DISTANCE_TO_BORDER + PLAYER_DIMENSIONS.x), playerKeyBindings(sf::Keyboard::Key::Up, sf::Keyboard::Key::Down));
@@ -53,7 +44,7 @@ int main() {
 
         window.clear();
         
-        Entity::updateAll(window, entities);
+        Entity::updateAll(window);
 
         window.display();
     }

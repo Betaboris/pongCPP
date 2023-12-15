@@ -1,6 +1,7 @@
+#include <iostream>
+#include <typeinfo>
 #include "Ball.hpp"
 
-std::unordered_set<Boundary*> Ball::boundaries;
 
 Ball::Ball() : Entity(sf::Vector2f(WINDOW_WIDTH / 2 - BALL_SIDE_LEN / 2, WINDOW_HEIGHT / 2 - BALL_SIDE_LEN / 2),
                sf::Vector2f(BALL_SIDE_LEN, BALL_SIDE_LEN)),
@@ -13,22 +14,33 @@ void Ball::handleMovement() {
     body.setPosition(nextPos);
 }
 
-void Ball::checkBoundaryCollision() {
-    for (auto b : boundaries) {
-        if (isCollision(*b)) {
-            switch (b->type) {
-                case Bouncy:
-                    speed.y = -speed.y;
-                    break;
-                case Functional:
-                    b->onCollision();
-                    break;
+void Ball::handleCollisions() {
+    for (auto e : allEntities) { 
+        if (e == this) {
+            continue;
+        }
+
+        auto prev = prevOverlap[e->id()];
+
+        if (isCollision(*e)) {
+            Player * p = dynamic_cast<Player *>(e);
+
+            //if a player, also add velocity
+            if (p) {
+                speed = speed + p->velocity;
+            } 
+
+            //if previous overlap in x-dimension, it moves in y-direction
+            if (prev.first) {
+                speed.y = -speed.y;
+            } else if (prev.second){
+                speed.x = -speed.x;
             }
         }
     }
 }
 
 void Ball::update() {
-    checkBoundaryCollision();
+    handleCollisions();
     handleMovement();
 }
