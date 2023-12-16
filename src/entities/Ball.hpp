@@ -15,7 +15,7 @@ public:
 
     Ball();
 
-    void reflectVelocityOnCollision(Entity& other);
+    void reflectVelocityOnCollision(Entity& other, bool addSpeed);
     void handleBoundaryCollision();
     void handlePlayerCollision();
     void handleMovement() override;

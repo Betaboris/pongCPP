@@ -14,7 +14,7 @@ void Ball::handleMovement() {
     body.setPosition(nextPos);
 }
 
-void Ball::reflectVelocityOnCollision(Entity& other) {
+void Ball::reflectVelocityOnCollision(Entity& other, bool addSpeed) {
     auto ourBoundingBox = getBoundingBox();
     auto theirBoundingBox = other.getBoundingBox();
 
@@ -25,10 +25,10 @@ void Ball::reflectVelocityOnCollision(Entity& other) {
     // Determine the axis of the collision
     if (overlapX < overlapY) {
         // Smaller overlap in X-axis suggests collision is horizontal
-        speed.x *= -1;
+        speed.x *= (addSpeed ? -1*BALL_SPEED_UP : -1);
     } else {
         // Smaller overlap in Y-axis suggests collision is vertical
-        speed.y *= -1;
+        speed.y *= (addSpeed ? -1*BALL_SPEED_UP : -1);
     }
 }
 
@@ -38,7 +38,7 @@ void Ball::handleBoundaryCollision() {
 
         switch (b->type) {
             case Bouncy:
-                reflectVelocityOnCollision(*b);
+                reflectVelocityOnCollision(*b, false);
                 break;
             case Functional:
                 b->onCollision();
@@ -49,18 +49,18 @@ void Ball::handleBoundaryCollision() {
 
 void Ball::handlePlayerCollision() {
     for (auto player : players) {
-        if (isCollision(*player)) {
-            if (!inPlayerCollision) {
-                reflectVelocityOnCollision(*player);
+        if (!isCollision(*player)) continue;
 
-                // Catch speed from player
-                speed.x += BALL_FRICTION * player->speed.x;
-                speed.y += BALL_FRICTION * player->speed.y;
+        if (!inPlayerCollision) {
+            reflectVelocityOnCollision(*player, true);
 
-                inPlayerCollision = true; // Set the collision flag
-            }
-            return; // Exit the function to avoid multiple bounces
+            // Catch speed from player
+            speed.x += BALL_FRICTION * player->speed.x;
+            speed.y += BALL_FRICTION * player->speed.y;
+
+            inPlayerCollision = true; // Set the collision flag
         }
+        return; // Exit the function to avoid multiple bounces
     }
     
     // If no collision detected, reset the flag
