@@ -2,25 +2,27 @@
 #define PLAYER_HPP
 
 #include "Entity.hpp"
-#include "Ball.hpp"
+#include "Boundary.hpp"
 #include "../constants/constants.hpp"
-#include <vector>
+#include <unordered_set>
 
 class Player : public Entity {
 public:
-    float velocity;
+    sf::Vector2f speed;
     float acceleration;
     float deceleration;
-    int defaultX;
     std::unordered_map<Keys, sf::Keyboard::Key> keyBindings;
-    static std::vector<Ball*> balls;
-    static std::vector<Boundary*> boundaries;
+    static std::unordered_set<Boundary*> boundaries;
 
-    Player(int defaultX, std::unordered_map<Keys, sf::Keyboard::Key> keyBindings);
+    Player(const sf::Vector2f& position, const std::unordered_map<Keys, sf::Keyboard::Key> keyBindings);
 
+    bool isKeyActive(Keys key);
+    void applyAcceleration();
+    void applyDeceleration();
+    void clampSpeedAndPosition();
     void handleMovement() override;
     void update() override;
-    void handleBallCollisions();
+    void handleBoundaryCollision();
 };
 
 #endif

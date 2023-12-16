@@ -5,41 +5,50 @@
 #include "../entities/all_entities.hpp"
 #include "../utils/utils.hpp"
 
+Boundary createWall(const sf::Vector2f& position, const sf::Vector2f& size, const BoundaryType& type, std::function<void()> callback = nullptr) {
+    return Boundary(position, size, type, callback);
+}
+
+Player createPlayer(const sf::Vector2f& position, const std::unordered_map<Keys, sf::Keyboard::Key>& keyBindings) {
+    return Player(position, keyBindings);
+}
+
+std::unordered_map<Keys, sf::Keyboard::Key> buildKeyBindings(sf::Keyboard::Key upKey, sf::Keyboard::Key downKey) {
+    PlayerKeyBindingsBuilder builder;
+    return builder.setUp(upKey).setDown(downKey).build();
+}
+
 int main() {
-    std::vector<Entity*> entities;
+    std::vector<Boundary> walls = {
+        createWall(sf::Vector2f(-50, 0), sf::Vector2f(50, WINDOW_HEIGHT), Bouncy, []() { std::cout << "Left wall\n"; }),
+        createWall(sf::Vector2f(WINDOW_WIDTH, 0), sf::Vector2f(50, WINDOW_HEIGHT), Bouncy, []() { std::cout << "Right wall\n"; }),
+        createWall(sf::Vector2f(0, -50), sf::Vector2f(WINDOW_WIDTH, 50), Bouncy),
+        createWall(sf::Vector2f(0, WINDOW_HEIGHT), sf::Vector2f(WINDOW_WIDTH, 50), Bouncy)
+    };
+
+    for (auto& wall : walls) {
+        Ball::boundaries.insert(&wall);
+        Player::boundaries.insert(&wall);
+    }
 
     Ball ball;
-    Player::balls.push_back(&ball);
 
-    sf::Vector2f topSize(WINDOW_WIDTH, 50);
-    sf::Vector2f sideSize(50, WINDOW_HEIGHT);
+    // Calculate the vertical center position for the players
+    float centerY = (WINDOW_HEIGHT - PLAYER_DIMENSIONS.y) / 2.0f;
 
-    Boundary leftWall(sf::Vector2f(-50, 0), sideSize, Functional, []() {
-        std::cout << "Calling leftWall function" << std::endl;
-    });
+    // Create the left player
+    Player pLeft = createPlayer(sf::Vector2f(DISTANCE_TO_BORDER, centerY), buildKeyBindings(sf::Keyboard::Key::W, sf::Keyboard::Key::S));
 
-    Boundary rightWall(sf::Vector2f(WINDOW_WIDTH, 0), sideSize, Functional, []() {
-        std::cout << "Calling rightWall function" << std::endl;
-    });
+    // Create the right player, adjusting position for the player's width
+    Player pRight = createPlayer(sf::Vector2f(WINDOW_WIDTH - (DISTANCE_TO_BORDER + PLAYER_DIMENSIONS.x), centerY), buildKeyBindings(sf::Keyboard::Key::Up, sf::Keyboard::Key::Down));
 
-    Boundary topWall(sf::Vector2f(0, -50), topSize, Bouncy);
+    std::vector<Player*> players = {&pLeft, &pRight};
 
-    Boundary bottomWall(sf::Vector2f(0, WINDOW_HEIGHT), topSize, Bouncy);
+    for (auto& player : players) {
+        Ball::players.insert(player);
+    }
 
-    Ball::boundaries.insert(&leftWall);
-    Ball::boundaries.insert(&rightWall);
-    Ball::boundaries.insert(&topWall);
-    Ball::boundaries.insert(&bottomWall);
-
-    Player::boundaries.push_back(&topWall);
-    Player::boundaries.push_back(&bottomWall);
-
-    Player pLeft(DISTANCE_TO_BORDER, playerKeyBindings(sf::Keyboard::Key::W, sf::Keyboard::Key::S));
-    Player pRight(WINDOW_WIDTH - (DISTANCE_TO_BORDER + PLAYER_DIMENSIONS.x), playerKeyBindings(sf::Keyboard::Key::Up, sf::Keyboard::Key::Down));
-
-    entities.push_back(&pLeft);
-    entities.push_back(&pRight);
-    entities.push_back(&ball);
+    std::vector<Entity*> entities = {&pLeft, &pRight, &ball};
 
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "PONG");
     window.setFramerateLimit(60);
@@ -52,11 +61,9 @@ int main() {
         }
 
         window.clear();
-        
         Entity::updateAll(window, entities);
-
         window.display();
     }
-    
+
     return 0;
 }

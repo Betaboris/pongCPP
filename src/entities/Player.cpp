@@ -1,59 +1,84 @@
 #include "Player.hpp"
 #include <unordered_map>
-#include "../utils/utils.hpp"
 #include <iostream>
 
-std::vector<Ball*> Player::balls;
-std::vector<Boundary*> Player::boundaries;
+std::unordered_set<Boundary*> Player::boundaries;
 
-Player::Player(int defaultX, std::unordered_map<Keys, sf::Keyboard::Key> keyBindings) : 
-        Entity(sf::Vector2f(defaultX, (WINDOW_HEIGHT / 2) - (PLAYER_DIMENSIONS.y / 2)), PLAYER_DIMENSIONS),
+Player::Player(const sf::Vector2f& position, const std::unordered_map<Keys, sf::Keyboard::Key> keyBindings) : 
+        Entity(position, PLAYER_DIMENSIONS),
         keyBindings(keyBindings),
-        velocity(0),
-        acceleration(0.4f),
-        deceleration(0.1f),
-        defaultX(defaultX) {}
+        speed(sf::Vector2f(0, 0)),
+        acceleration(0.5f),
+        deceleration(0.1f) {}
 
-void Player::handleMovement() {
-
-    bool bounced = false;
-
-    for (auto b : boundaries) {
-        if (isCollision(*b)) {
-            velocity *= -BOUNCE_FACTOR;
-        }
+bool Player::isKeyActive(Keys key) {
+    auto found = keyBindings.find(key);
+    if (found != keyBindings.end()) {
+        return sf::Keyboard::isKeyPressed(found->second);
     }
-
-    if (sf::Keyboard::isKeyPressed(keyBindings[UP])) {
-        velocity -= acceleration;
-    }
-
-    if (sf::Keyboard::isKeyPressed(keyBindings[DOWN])) {
-        velocity += acceleration;
-    }   
-
-    if (velocity > 0) {
-        velocity = std::max(0.0f, velocity - deceleration);
-    } else if (velocity < 0) {
-        velocity = std::min(0.0f, velocity + deceleration);
-    }
-
-    float yAxis = body.getPosition().y + velocity;
-    float maxYPos = WINDOW_HEIGHT - (int) PLAYER_DIMENSIONS.y;
-    yAxis = std::min(maxYPos, std::max(yAxis, 0.0f));
-    body.setPosition(defaultX, yAxis);
+    return false;
 }
 
-void Player::handleBallCollisions() {
-    for (auto ball : balls) {
-        if (isCollision(*ball))  {
-            ball->speed.x = -ball->speed.x;
-            ball->speed.y = ball->speed.y + velocity;
+void Player::applyAcceleration() {
+    if (isKeyActive(Keys::UP)) {
+        speed.y -= acceleration;
+    }
+    if (isKeyActive(Keys::DOWN)) {
+        speed.y += acceleration;
+    }
+    if (isKeyActive(Keys::LEFT)) {
+        speed.x -= acceleration;
+    }
+    if (isKeyActive(Keys::RIGHT)) {
+        speed.x += acceleration;
+    }
+}
+
+void Player::applyDeceleration() {
+    if (!isKeyActive(Keys::UP) && !isKeyActive(Keys::DOWN)) {
+        if (speed.y > 0) {
+            speed.y = std::max(0.0f, speed.y - deceleration);
+        } else if (speed.y < 0) {
+            speed.y = std::min(0.0f, speed.y + deceleration);
         }
+    }
+    if (!isKeyActive(Keys::LEFT) && !isKeyActive(Keys::RIGHT)) {
+        if (speed.x > 0) {
+            speed.x = std::max(0.0f, speed.x - deceleration);
+        } else if (speed.x < 0) {
+            speed.x = std::min(0.0f, speed.x + deceleration);
+        }
+    }
+}
+
+void Player::clampSpeedAndPosition() {
+    speed.x = std::clamp(speed.x, -PLAYER_MAX_SPEED, PLAYER_MAX_SPEED);
+    speed.y = std::clamp(speed.y, -PLAYER_MAX_SPEED, PLAYER_MAX_SPEED);
+
+    auto currentPos = body.getPosition();        
+    auto nextPos = currentPos + speed;
+
+    nextPos.x = std::clamp(nextPos.x, 0.0f, WINDOW_WIDTH - PLAYER_DIMENSIONS.x);
+    nextPos.y = std::clamp(nextPos.y, 0.0f, WINDOW_HEIGHT - PLAYER_DIMENSIONS.y);
+
+    body.setPosition(nextPos);
+}
+
+void Player::handleMovement() {
+    applyAcceleration();
+    applyDeceleration();
+    clampSpeedAndPosition();
+}
+
+void Player::handleBoundaryCollision() {
+    for (auto b : boundaries) {
+        if (!isCollision(*b)) continue;
+        speed.x *= -BOUNCE_FACTOR;
+        speed.y *= -BOUNCE_FACTOR;
     }
 }
 
 void Player::update() {
-    handleBallCollisions();
+    handleBoundaryCollision();
     handleMovement();
 }
