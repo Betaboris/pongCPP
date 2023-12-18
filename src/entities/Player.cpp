@@ -2,7 +2,7 @@
 #include <unordered_map>
 #include <iostream>
 
-std::unordered_set<Boundary*> Player::boundaries;
+std::unordered_set<Entity*> Player::boundaries;
 
 Player::Player(const sf::Vector2f& position, const std::unordered_map<Keys, sf::Keyboard::Key> keyBindings) : 
         Entity(position, PLAYER_DIMENSIONS),

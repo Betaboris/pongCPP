@@ -7,5 +7,6 @@ const float BOUNCE_FACTOR = 0.3f;
 const int BALL_SIDE_LEN = 15;
 const float BALL_FRICTION = 0.3f;
 const float BALL_SPEED_UP = 1.02f;
-const sf::Vector2f PLAYER_DIMENSIONS(25, 200);
+const float MAX_BALL_SPEED = 100.0f; 
+const sf::Vector2f PLAYER_DIMENSIONS(75, 200);
 extern const float PLAYER_MAX_SPEED = 25;

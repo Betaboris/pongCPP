@@ -15,7 +15,10 @@ public:
 
     Ball();
 
+    void clampSpeed();
     void reflectVelocityOnCollision(Entity& other, bool addSpeed);
+    bool isSweptCollision(Entity& other);
+    std::pair<sf::Vector2f, sf::Vector2f> getSweptAABB();
     void handleBoundaryCollision();
     void handlePlayerCollision();
     void handleMovement() override;

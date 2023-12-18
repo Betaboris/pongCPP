@@ -10,6 +10,7 @@ extern const float BOUNCE_FACTOR;
 extern const int BALL_SIDE_LEN;
 extern const float BALL_FRICTION;
 extern const float BALL_SPEED_UP;
+extern const float MAX_BALL_SPEED;
 extern const sf::Vector2f PLAYER_DIMENSIONS;
 extern const float PLAYER_MAX_SPEED;
 

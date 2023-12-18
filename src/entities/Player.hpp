@@ -12,7 +12,7 @@ public:
     float acceleration;
     float deceleration;
     std::unordered_map<Keys, sf::Keyboard::Key> keyBindings;
-    static std::unordered_set<Boundary*> boundaries;
+    static std::unordered_set<Entity*> boundaries;
 
     Player(const sf::Vector2f& position, const std::unordered_map<Keys, sf::Keyboard::Key> keyBindings);
 

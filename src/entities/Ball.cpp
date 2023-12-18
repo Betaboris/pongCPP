@@ -1,4 +1,6 @@
 #include "Ball.hpp"
+#include <iostream>
+#include <cmath>
 
 std::unordered_set<Boundary*> Ball::boundaries;
 std::unordered_set<Player*> Ball::players;
@@ -7,6 +9,14 @@ Ball::Ball() : Entity(sf::Vector2f(WINDOW_WIDTH / 2 - BALL_SIDE_LEN / 2, WINDOW_
                sf::Vector2f(BALL_SIDE_LEN, BALL_SIDE_LEN)),
                inPlayerCollision(false),
                speed(sf::Vector2f(5, 0)) {}
+
+void Ball::clampSpeed() {
+    float speedMagnitude = std::sqrt(speed.x * speed.x + speed.y * speed.y);
+    if (speedMagnitude > MAX_BALL_SPEED) {
+        speed.x = (speed.x / speedMagnitude) * MAX_BALL_SPEED;
+        speed.y = (speed.y / speedMagnitude) * MAX_BALL_SPEED;
+    }
+}
 
 void Ball::handleMovement() {
     auto currentPos = body.getPosition();        
@@ -30,11 +40,44 @@ void Ball::reflectVelocityOnCollision(Entity& other, bool addSpeed) {
         // Smaller overlap in Y-axis suggests collision is vertical
         speed.y *= (addSpeed ? -1*BALL_SPEED_UP : -1);
     }
+
+    clampSpeed();
+}
+
+std::pair<sf::Vector2f, sf::Vector2f> Ball::getSweptAABB() {
+    auto box = getBoundingBox();
+    sf::Vector2f topLeft = box.first;
+    sf::Vector2f bottomRight = box.second;
+
+    if (speed.x > 0) {
+        bottomRight.x += speed.x;
+    } else {
+        topLeft.x += speed.x;
+    }
+
+    if (speed.y > 0) {
+        bottomRight.y += speed.y;
+    } else {
+        topLeft.y += speed.y;
+    }
+
+    return {topLeft, bottomRight};
+}
+
+bool Ball::isSweptCollision(Entity& other) {
+    auto sweptBox = getSweptAABB();
+    auto otherBox = other.getBoundingBox();
+
+    // Check if there is an overlap between the swept AABB and the other entity
+    bool overlapX = sweptBox.second.x >= otherBox.first.x && sweptBox.first.x <= otherBox.second.x;
+    bool overlapY = sweptBox.second.y >= otherBox.first.y && sweptBox.first.y <= otherBox.second.y;
+
+    return overlapX && overlapY;
 }
 
 void Ball::handleBoundaryCollision() {
     for (auto b : boundaries) {
-        if (!isCollision(*b)) continue;
+        if (!isSweptCollision(*b)) continue;
 
         switch (b->type) {
             case Bouncy:
@@ -49,7 +92,7 @@ void Ball::handleBoundaryCollision() {
 
 void Ball::handlePlayerCollision() {
     for (auto player : players) {
-        if (!isCollision(*player)) continue;
+        if (!isSweptCollision(*player)) continue;
 
         if (!inPlayerCollision) {
             reflectVelocityOnCollision(*player, true);

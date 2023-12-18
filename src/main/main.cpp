@@ -29,9 +29,10 @@ int main() {
     for (auto& wall : walls) {
         Ball::boundaries.insert(&wall);
         Player::boundaries.insert(&wall);
-    }
+    } 
 
     Ball ball;
+    Player::boundaries.insert(&ball);
 
     // Calculate the vertical center position for the players
     float centerY = (WINDOW_HEIGHT - PLAYER_DIMENSIONS.y) / 2.0f;
