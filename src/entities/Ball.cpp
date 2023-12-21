@@ -85,6 +85,8 @@ void Ball::handleBoundaryCollision() {
                 break;
             case Functional:
                 b->onCollision();
+                body.setPosition(sf::Vector2f(WINDOW_WIDTH / 2 - BALL_SIDE_LEN / 2, WINDOW_HEIGHT / 2 - BALL_SIDE_LEN / 2));
+                speed = (std::rand() % 2 == 0) ? sf::Vector2f(5, 0) : sf::Vector2f(-5, 0);
                 break;
         }
     }

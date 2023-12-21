@@ -51,12 +51,26 @@ void drawScores(sf::RenderWindow& window, const std::vector<Player*>& players) {
     }
 }
 
+void score(Player& player, GameState& state) {
+    player.score++;
+    state = GameState::Paused;
+}
+
 int main() {
     GameState gameState = GameState::StartScreen;
 
+ // Calculate the vertical center position for the players
+    float centerY = (WINDOW_HEIGHT - PLAYER_DIMENSIONS.y) / 2.0f;
+
+    // Create the left player
+    Player pLeft = createPlayer(PlayerType::Left);
+
+    // Create the right player, adjusting position for the player's width
+    Player pRight = createPlayer(PlayerType::Right);
+
     std::vector<Boundary> walls = {
-        createWall(sf::Vector2f(-50, 0), sf::Vector2f(50, WINDOW_HEIGHT), Bouncy, []() { std::cout << "Left wall\n"; }),
-        createWall(sf::Vector2f(WINDOW_WIDTH, 0), sf::Vector2f(50, WINDOW_HEIGHT), Bouncy, []() { std::cout << "Right wall\n"; }),
+        createWall(sf::Vector2f(-50, 0), sf::Vector2f(50, WINDOW_HEIGHT), Functional, [&pRight, &gameState]() {score(pRight, gameState);}),
+        createWall(sf::Vector2f(WINDOW_WIDTH, 0), sf::Vector2f(50, WINDOW_HEIGHT), Functional, [&pLeft, &gameState]() {score(pLeft, gameState);}),
         createWall(sf::Vector2f(0, -50), sf::Vector2f(WINDOW_WIDTH, 50), Bouncy),
         createWall(sf::Vector2f(0, WINDOW_HEIGHT), sf::Vector2f(WINDOW_WIDTH, 50), Bouncy)
     };
@@ -69,14 +83,7 @@ int main() {
     Ball ball;
     Player::boundaries.insert(&ball);
 
-    // Calculate the vertical center position for the players
-    float centerY = (WINDOW_HEIGHT - PLAYER_DIMENSIONS.y) / 2.0f;
-
-    // Create the left player
-    Player pLeft = createPlayer(PlayerType::Left);
-
-    // Create the right player, adjusting position for the player's width
-    Player pRight = createPlayer(PlayerType::Right);
+   
 
     std::vector<Player*> players = {&pLeft, &pRight};
 
