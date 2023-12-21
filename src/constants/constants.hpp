@@ -18,6 +18,10 @@ enum BoundaryType {
     Bouncy, Functional
 };
 
+enum class GameState {
+    Playing, Paused, StartScreen, GameOver
+};
+
 enum class Keys { UP, DOWN, LEFT, RIGHT };
 
 #endif

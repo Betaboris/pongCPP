@@ -19,6 +19,8 @@ std::unordered_map<Keys, sf::Keyboard::Key> buildKeyBindings(sf::Keyboard::Key u
 }
 
 int main() {
+    GameState gameState = GameState::StartScreen;
+
     std::vector<Boundary> walls = {
         createWall(sf::Vector2f(-50, 0), sf::Vector2f(50, WINDOW_HEIGHT), Bouncy, []() { std::cout << "Left wall\n"; }),
         createWall(sf::Vector2f(WINDOW_WIDTH, 0), sf::Vector2f(50, WINDOW_HEIGHT), Bouncy, []() { std::cout << "Right wall\n"; }),
@@ -59,6 +61,16 @@ int main() {
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
                 window.close();
+        }
+
+        switch (gameState)
+        {
+        case GameState::Playing:
+            //playingLoop();
+            break;
+        
+        default:
+            break;
         }
 
         window.clear();

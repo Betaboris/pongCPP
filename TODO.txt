@@ -1,0 +1,15 @@
+#Prio
+1. Räkna och visa poäng på skärmen. (Jon)
+2. När bollen kommer ur skärmen, pausa spelet (Jon)
+3. Start/GameOver skärmar (Erik)
+
+---------
+
+#Extras
+1. Gör en svans till bollen
+2. Fixa collision i y-led med bollen
+3. Skapa particles för kollision med boll
+4. Fixa en vinnare
+5. Fixa najs court
+
+
