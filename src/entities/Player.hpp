@@ -13,8 +13,10 @@ public:
     float deceleration;
     std::unordered_map<Keys, sf::Keyboard::Key> keyBindings;
     static std::unordered_set<Entity*> boundaries;
+    PlayerType type;
+    int score;
 
-    Player(const sf::Vector2f& position, const std::unordered_map<Keys, sf::Keyboard::Key> keyBindings);
+    Player(const sf::Vector2f& position, const std::unordered_map<Keys, sf::Keyboard::Key> keyBindings, PlayerType type);
 
     bool isKeyActive(Keys key);
     void applyAcceleration();

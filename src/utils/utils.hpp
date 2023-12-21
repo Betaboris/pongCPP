@@ -18,4 +18,5 @@ public:
     std::unordered_map<Keys, sf::Keyboard::Key> build();
 };
 
+extern std::unordered_map<PlayerType, sf::Vector2f> scorePositions;
 #endif

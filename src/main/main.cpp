@@ -5,17 +5,50 @@
 #include "../entities/all_entities.hpp"
 #include "../utils/utils.hpp"
 
+const sf::Font font = []() {
+    sf::Font font;
+    font.loadFromFile("../src/fonts/Roboto-Regular.ttf");
+    return font;
+}();
+
 Boundary createWall(const sf::Vector2f& position, const sf::Vector2f& size, const BoundaryType& type, std::function<void()> callback = nullptr) {
     return Boundary(position, size, type, callback);
 }
 
-Player createPlayer(const sf::Vector2f& position, const std::unordered_map<Keys, sf::Keyboard::Key>& keyBindings) {
-    return Player(position, keyBindings);
+Player createPlayer(const sf::Vector2f& position, const std::unordered_map<Keys, sf::Keyboard::Key>& keyBindings, PlayerType type) {
+    return Player(position, keyBindings, type);
 }
+
 
 std::unordered_map<Keys, sf::Keyboard::Key> buildKeyBindings(sf::Keyboard::Key upKey, sf::Keyboard::Key downKey) {
     PlayerKeyBindingsBuilder builder;
     return builder.setUp(upKey).setDown(downKey).build();
+}
+
+Player createPlayer(PlayerType type) {
+    switch (type)
+    {
+    case PlayerType::Left:
+        return createPlayer(sf::Vector2f(DISTANCE_TO_BORDER, (WINDOW_HEIGHT - PLAYER_DIMENSIONS.y) / 2.0f), 
+        buildKeyBindings(sf::Keyboard::Key::W, sf::Keyboard::Key::S),
+        type);
+    case PlayerType::Right:
+        return createPlayer(sf::Vector2f(WINDOW_WIDTH - (DISTANCE_TO_BORDER + PLAYER_DIMENSIONS.x), 
+        (WINDOW_HEIGHT - PLAYER_DIMENSIONS.y) / 2.0f), buildKeyBindings(sf::Keyboard::Key::Up, sf::Keyboard::Key::Down),
+        type);
+    }
+}
+
+void drawScores(sf::RenderWindow& window, const std::vector<Player*>& players) {
+    for (auto& player : players) {
+        sf::Text scoreText;
+        scoreText.setFont(font);
+        scoreText.setCharacterSize(50);
+        scoreText.setFillColor(sf::Color::White);
+        scoreText.setPosition(scorePositions[player->type]);
+        scoreText.setString(std::to_string(player->score));
+        window.draw(scoreText);
+    }
 }
 
 int main() {
@@ -40,10 +73,10 @@ int main() {
     float centerY = (WINDOW_HEIGHT - PLAYER_DIMENSIONS.y) / 2.0f;
 
     // Create the left player
-    Player pLeft = createPlayer(sf::Vector2f(DISTANCE_TO_BORDER, centerY), buildKeyBindings(sf::Keyboard::Key::W, sf::Keyboard::Key::S));
+    Player pLeft = createPlayer(PlayerType::Left);
 
     // Create the right player, adjusting position for the player's width
-    Player pRight = createPlayer(sf::Vector2f(WINDOW_WIDTH - (DISTANCE_TO_BORDER + PLAYER_DIMENSIONS.x), centerY), buildKeyBindings(sf::Keyboard::Key::Up, sf::Keyboard::Key::Down));
+    Player pRight = createPlayer(PlayerType::Right);
 
     std::vector<Player*> players = {&pLeft, &pRight};
 
@@ -75,6 +108,7 @@ int main() {
 
         window.clear();
         Entity::updateAll(window, entities);
+        drawScores(window, players);
         window.display();
     }
 

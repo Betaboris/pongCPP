@@ -4,12 +4,14 @@
 
 std::unordered_set<Entity*> Player::boundaries;
 
-Player::Player(const sf::Vector2f& position, const std::unordered_map<Keys, sf::Keyboard::Key> keyBindings) : 
+Player::Player(const sf::Vector2f& position, const std::unordered_map<Keys, sf::Keyboard::Key> keyBindings, PlayerType type) : 
         Entity(position, PLAYER_DIMENSIONS),
         keyBindings(keyBindings),
         speed(sf::Vector2f(0, 0)),
         acceleration(0.5f),
-        deceleration(0.1f) {}
+        deceleration(0.1f),
+        score(0),
+        type(type) {}
 
 bool Player::isKeyActive(Keys key) {
     auto found = keyBindings.find(key);
