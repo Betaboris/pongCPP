@@ -4,6 +4,8 @@
 #include "../constants/constants.hpp"
 #include "../entities/all_entities.hpp"
 #include "../utils/utils.hpp"
+#include <chrono>
+#include <thread>
 
 const sf::Font font = []() {
     sf::Font font;
@@ -53,7 +55,11 @@ void drawScores(sf::RenderWindow& window, const std::vector<Player*>& players) {
 
 void score(Player& player, GameState& state) {
     player.score++;
-    state = GameState::Paused;
+    if (player.score >= MAX_SCORE) {
+        state = GameState::GameOver;
+    } else {
+        state = GameState::Paused;
+    }
 }
 
 int main() {
@@ -83,8 +89,6 @@ int main() {
     Ball ball;
     Player::boundaries.insert(&ball);
 
-   
-
     std::vector<Player*> players = {&pLeft, &pRight};
 
     for (auto& player : players) {
@@ -103,13 +107,57 @@ int main() {
                 window.close();
         }
 
+        sf::Text text;
+        text.setFont(font);
+        text.setCharacterSize(50);
+        text.setFillColor(sf::Color::White);
+
         switch (gameState)
         {
         case GameState::Playing:
             //playingLoop();
             break;
-        
-        default:
+
+        case GameState::Paused:
+            //Exempelkod för att se så att det funkar
+            std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+            gameState = GameState::Playing;
+            break;
+
+        case GameState::StartScreen:
+            //Också scuffed exempelkod
+            window.clear();
+            text.setString("Press space to start");
+            text.setPosition(sf::Vector2f((WINDOW_WIDTH - text.getLocalBounds().width) / 2, (WINDOW_HEIGHT - text.getLocalBounds().height) / 2));
+            window.draw(text);
+            window.display();
+
+            while (!sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+                continue;
+            }
+
+            gameState = GameState::Playing;
+            break;
+
+        case GameState::GameOver:
+            //Också scuffed exempelkod
+            window.clear();
+            text.setString("Game over");
+            text.setPosition(sf::Vector2f((WINDOW_WIDTH - text.getLocalBounds().width) / 2, (WINDOW_HEIGHT - text.getLocalBounds().height) / 2));
+            window.draw(text);
+            window.display();
+
+            while (!sf::Keyboard::isKeyPressed(sf::Keyboard::Space) || !sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                continue;
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+                gameState = GameState::Playing;
+                //Reset game
+            } else {
+                exit(0);
+            }
+
+            gameState = GameState::StartScreen;
             break;
         }
 

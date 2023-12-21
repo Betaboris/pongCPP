@@ -10,3 +10,4 @@ const float BALL_SPEED_UP = 1.02f;
 const float MAX_BALL_SPEED = 100.0f; 
 const sf::Vector2f PLAYER_DIMENSIONS(75, 200);
 extern const float PLAYER_MAX_SPEED = 25;
+const int MAX_SCORE = 4;
