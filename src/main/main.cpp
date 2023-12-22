@@ -112,10 +112,13 @@ int main() {
         text.setCharacterSize(50);
         text.setFillColor(sf::Color::White);
 
+        window.clear();
+
         switch (gameState)
         {
         case GameState::Playing:
-            //playingLoop();
+            Entity::updateAll(window, entities);
+            drawScores(window, players);
             break;
 
         case GameState::Paused:
@@ -126,44 +129,33 @@ int main() {
 
         case GameState::StartScreen:
             //Också scuffed exempelkod
-            window.clear();
             text.setString("Press space to start");
             text.setPosition(sf::Vector2f((WINDOW_WIDTH - text.getLocalBounds().width) / 2, (WINDOW_HEIGHT - text.getLocalBounds().height) / 2));
             window.draw(text);
-            window.display();
 
-            while (!sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
-                continue;
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+                gameState = GameState::Playing;
+                //Reset game
+            } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)){
+                exit(0);
             }
-
-            gameState = GameState::Playing;
             break;
 
         case GameState::GameOver:
             //Också scuffed exempelkod
-            window.clear();
             text.setString("Game over");
             text.setPosition(sf::Vector2f((WINDOW_WIDTH - text.getLocalBounds().width) / 2, (WINDOW_HEIGHT - text.getLocalBounds().height) / 2));
             window.draw(text);
-            window.display();
 
-            while (!sf::Keyboard::isKeyPressed(sf::Keyboard::Space) || !sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
-                continue;
-            }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
                 gameState = GameState::Playing;
                 //Reset game
-            } else {
+            } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)){
                 exit(0);
             }
-
-            gameState = GameState::StartScreen;
             break;
         }
 
-        window.clear();
-        Entity::updateAll(window, entities);
-        drawScores(window, players);
         window.display();
     }
 
