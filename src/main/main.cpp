@@ -118,6 +118,7 @@ int main() {
         {
         case GameState::Playing:
             Entity::updateAll(window, entities);
+            ball.drawTails(window);
             drawScores(window, players);
             break;
 
@@ -149,7 +150,10 @@ int main() {
 
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
                 gameState = GameState::Playing;
-                //Reset game
+                //Reset scores, TODO also reset positions?
+                for (auto p : players) {
+                    p->score = 0;
+                }
             } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)){
                 exit(0);
             }

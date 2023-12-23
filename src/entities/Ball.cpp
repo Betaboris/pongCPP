@@ -85,6 +85,7 @@ void Ball::handleBoundaryCollision() {
                 break;
             case Functional:
                 b->onCollision();
+                //Center position and give left or right speed
                 body.setPosition(sf::Vector2f(WINDOW_WIDTH / 2 - BALL_SIDE_LEN / 2, WINDOW_HEIGHT / 2 - BALL_SIDE_LEN / 2));
                 speed = (std::rand() % 2 == 0) ? sf::Vector2f(5, 0) : sf::Vector2f(-5, 0);
                 break;
@@ -112,8 +113,29 @@ void Ball::handlePlayerCollision() {
     inPlayerCollision = false;
 }
 
+void Ball::addTailPosition() {
+    tailPositions.emplace_front(body.getPosition());
+    if (tailPositions.size() > BALL_TAIL_LEN) {
+        tailPositions.pop_back();
+    }
+}
+
+void Ball::drawTails(sf::RenderWindow & window) {
+    sf::Vector2f sides(BALL_SIDE_LEN, BALL_SIDE_LEN);
+    sf::RectangleShape ball(sides);
+    int delta = 255 / BALL_TAIL_LEN;
+    for (auto p : tailPositions) {
+        ball.setPosition(p);
+        auto c = ball.getFillColor();
+        c.a -= delta; //a is the alpha value
+        ball.setFillColor(c);
+        window.draw(ball);
+    }
+}
+
 void Ball::update() {
     handleBoundaryCollision();
     handlePlayerCollision();
     handleMovement();
+    addTailPosition();
 }

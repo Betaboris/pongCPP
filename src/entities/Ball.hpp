@@ -5,6 +5,7 @@
 #include "Entity.hpp"
 #include "Boundary.hpp"
 #include "Player.hpp"
+#include <deque>
 
 class Ball : public Entity {
 public:
@@ -12,10 +13,14 @@ public:
     static std::unordered_set<Boundary*> boundaries;
     static std::unordered_set<Player*> players;
     bool inPlayerCollision;
+    std::deque<sf::Vector2f> tailPositions;
+    
 
     Ball();
 
     void clampSpeed();
+    void addTailPosition();
+    void drawTails(sf::RenderWindow & window);
     void reflectVelocityOnCollision(Entity& other, bool addSpeed);
     bool isSweptCollision(Entity& other);
     std::pair<sf::Vector2f, sf::Vector2f> getSweptAABB();
