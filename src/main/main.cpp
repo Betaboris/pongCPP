@@ -58,8 +58,18 @@ void score(Player& player, GameState& state) {
     if (player.score >= MAX_SCORE) {
         state = GameState::GameOver;
     } else {
-        state = GameState::Paused;
+        //state = GameState::Paused;
     }
+}
+
+void drawCenteredText(std::string text, sf::RenderWindow& window, int size = 50, sf::Color color = sf::Color::White) {
+    sf::Text textObj;
+    textObj.setFont(font);
+    textObj.setCharacterSize(size);
+    textObj.setFillColor(color);
+    textObj.setString(text);
+    textObj.setPosition(sf::Vector2f((WINDOW_WIDTH - textObj.getLocalBounds().width) / 2, (WINDOW_HEIGHT - textObj.getLocalBounds().height) / 2));
+    window.draw(textObj);
 }
 
 int main() {
@@ -107,11 +117,6 @@ int main() {
                 window.close();
         }
 
-        sf::Text text;
-        text.setFont(font);
-        text.setCharacterSize(50);
-        text.setFillColor(sf::Color::White);
-
         window.clear();
 
         switch (gameState)
@@ -123,20 +128,17 @@ int main() {
             break;
 
         case GameState::Paused:
-            //Exempelkod för att se så att det funkar
-            std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-            gameState = GameState::Playing;
+            drawCenteredText("PAUSED", window, 10);
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+                gameState = GameState::Playing;
+            }
             break;
 
         case GameState::StartScreen:
-            //Också scuffed exempelkod
-            text.setString("Press space to start");
-            text.setPosition(sf::Vector2f((WINDOW_WIDTH - text.getLocalBounds().width) / 2, (WINDOW_HEIGHT - text.getLocalBounds().height) / 2));
-            window.draw(text);
+            drawCenteredText("Press space to start", window);
 
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
                 gameState = GameState::Playing;
-                //Reset game
             } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)){
                 exit(0);
             }
@@ -144,9 +146,7 @@ int main() {
 
         case GameState::GameOver:
             //Också scuffed exempelkod
-            text.setString("Game over");
-            text.setPosition(sf::Vector2f((WINDOW_WIDTH - text.getLocalBounds().width) / 2, (WINDOW_HEIGHT - text.getLocalBounds().height) / 2));
-            window.draw(text);
+            drawCenteredText("Game over\nPress space to play again, esc to exit", window);
 
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
                 gameState = GameState::Playing;
